@@ -26,6 +26,22 @@
                 var id = event.srcElement.parentElement.getElementsByClassName('todoItemId')[0].innerText;
                 self.todoListViewModel.deleteItem(id);
             });
+
+            $(".todoItemIsSelected").click(function(event){
+                var id = event.srcElement.parentElement.getElementsByClassName('todoItemId')[0].innerText;
+                var selected = event.srcElement.checked;
+
+                self.todoListViewModel.markItem(id, selected);
+
+                if (selected){
+                    event.srcElement.parentElement.parentElement.classList.add('completed');
+                }else{
+                    event.srcElement.parentElement.parentElement.classList.remove('completed');
+                }
+
+            });
+
+
         }
     }
 

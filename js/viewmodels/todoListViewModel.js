@@ -19,6 +19,14 @@ var TodoListViewModel = function(todosService, todoListView){
         }
     }
 
+    this.markItem = function (id, selected){
+        var vm = getTodoItemById(id);
+        vm.isCompleted = selected;
+
+        saveTodos();
+
+    }
+
     this.deleteItem = function(id){
 
         var vm = getTodoItemById(id);
