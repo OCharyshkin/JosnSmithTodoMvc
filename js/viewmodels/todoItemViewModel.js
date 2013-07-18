@@ -8,6 +8,7 @@
 
 var TodoItemViewModel = function(text){
 
+    this.id = (new Date()).getTime();
     this.text = text;
     this.isCompleted = false;
 

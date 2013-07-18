@@ -19,6 +19,22 @@ var TodoListViewModel = function(todosService, todoListView){
         }
     }
 
+    this.deleteItem = function(id){
+
+        var vm = getTodoItemById(id);
+        self.todos.remove(vm);
+
+        saveTodos();
+    }
+
+    function getTodoItemById(id){
+        for(var i = 0; i < self.todos._value.length; i++){
+            if (self.todos._value[i].id == id){
+                return self.todos._value[i];
+            }
+        }
+    }
+
     function saveTodos(){
         var todosModel = getTodosModel();
         todosService.saveTodos(todosModel);
