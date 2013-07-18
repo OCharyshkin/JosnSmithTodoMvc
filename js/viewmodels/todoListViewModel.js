@@ -1,13 +1,62 @@
-/**
- * Created with JetBrains WebStorm.
- * User: Oleg Charyshkin
- * Date: 5/30/13
- * Time: 3:54 PM
- * To change this template use File | Settings | File Templates.
- */
 
-var TodoListViewModel = function(){
+var TodoListViewModel = function(todosService, todoListView){
+
+    var self = this;
 
     this.todos = js.bindableList();
-    this.todos.add(new TodoItemViewModel("Hello, world!!!"));
+    this.todos.setValue(getTodosViewModel(todosService.getTodos()));
+
+    this.addNewTodoItem = function(text){
+        if (text || text.trim()){
+
+            var model = new TodoItem();
+            model.text = text;
+            this.todos.add(getTodoViewModel(model));
+
+            todoListView.clearNewItemBox();
+
+            saveTodos();
+        }
+    }
+
+    function saveTodos(){
+        var todosModel = getTodosModel();
+        todosService.saveTodos(todosModel);
+    }
+
+
+    function getTodosModel(){
+        var result = [];
+
+        self.todos._value.forEach(function(viewModel){
+
+            var model = new TodoItem();
+            model.text = viewModel.text;
+            model.isCompleted = viewModel.isCompleted;
+
+            result.push(model);
+        });
+
+        return result;
+    }
+
+
+    function getTodoViewModel(model){
+        var vm = new TodoItemViewModel(model.text);
+        vm.isCompleted = model.isCompleted;
+
+        return vm;
+    }
+
+
+    function getTodosViewModel(todosModel){
+
+        var result = [];
+
+        todosModel.forEach(function(model){
+            result.push(getTodoViewModel(model));
+        });
+
+        return result;
+    }
 }

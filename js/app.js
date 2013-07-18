@@ -1,22 +1,33 @@
 (function( window ) {
 	'use strict';
 
+    var ENTER_KEY = 13;
 
-    var todos = js.bindableList();
 
+    var TodoListView = function(){
+        this.clearNewItemBox = function(){
+            $("#new-todo").val('');
+        }
+    }
 
-    var TodoItemView = function(){
+    var todos = new TodoListViewModel(new TodosService(), new TodoListView());
+
+    var TodoItemView = function(viewModel){
         this.template = '#todoItemTemplate';
         this.init = function(viewModel){
-
             this.bind(viewModel.text).to('.todoItemText');
             this.bind(viewModel.isSelected).to('.todoItemIsSelected');
         };
     };
 
-    js.bind(todos).to("#todo-list", TodoItemView);
-    todos.setValue([new TodoItemViewModel("Hello, world!!!")]);
+    $("#new-todo").keydown(function(event) {
+        if (event.which == ENTER_KEY){
+            var text =  event.srcElement.value;
+            todos.addNewTodoItem(text);
+        }
+    });
 
+    js.bind(todos.todos).to("#todo-list", TodoItemView);
 
 
 })( window );
