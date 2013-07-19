@@ -6,6 +6,12 @@ var TodoListViewModel = function(todosService, todoListView){
     this.todos = js.bindableList();
     this.todos.setValue(getTodosViewModel(todosService.getTodos()));
 
+    this.init = function(){
+        self.todos._value.forEach(function(viewModel){
+            todoListView.markItem(viewModel.id, viewModel.isCompleted._value);
+        });
+    }
+
     this.addNewTodoItem = function(text){
         if (text || text.trim()){
 
@@ -21,16 +27,27 @@ var TodoListViewModel = function(todosService, todoListView){
 
     this.markItem = function (id, selected){
         var vm = getTodoItemById(id);
-        vm.isCompleted = selected;
+        vm.isCompleted.setValue(selected);
+
+        todoListView.markItem(id, selected);
 
         saveTodos();
-
     }
 
     this.deleteItem = function(id){
 
         var vm = getTodoItemById(id);
         self.todos.remove(vm);
+
+        saveTodos();
+    }
+
+    this.completeAll = function (completed){
+
+        self.todos._value.forEach(function(viewModel){
+            viewModel.isCompleted.setValue(completed);
+            todoListView.markItem(viewModel.id, viewModel.isCompleted._value);
+        });
 
         saveTodos();
     }
@@ -55,8 +72,10 @@ var TodoListViewModel = function(todosService, todoListView){
         self.todos._value.forEach(function(viewModel){
 
             var model = new TodoItem();
-            model.text = viewModel.text;
-            model.isCompleted = viewModel.isCompleted;
+
+            model.id  = viewModel.id;
+            model.text = viewModel.text._value;
+            model.isCompleted = viewModel.isCompleted._value;
 
             result.push(model);
         });
@@ -67,7 +86,9 @@ var TodoListViewModel = function(todosService, todoListView){
 
     function getTodoViewModel(model){
         var vm = new TodoItemViewModel(model.text);
-        vm.isCompleted = model.isCompleted;
+
+        vm.id = model.id;
+        vm.isCompleted.setValue(model.isCompleted);
 
         return vm;
     }

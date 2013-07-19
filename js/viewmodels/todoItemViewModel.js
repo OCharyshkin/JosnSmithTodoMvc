@@ -8,8 +8,11 @@
 
 var TodoItemViewModel = function(text){
 
-    this.id = (new Date()).getTime();
-    this.text = text;
-    this.isCompleted = false;
+    this.id = 0;
+    this.text = js.bindableValue();
+    this.isCompleted = js.bindableValue();
+
+    this.text.setValue(text);
+    this.isCompleted.setValue(false);
 
 }

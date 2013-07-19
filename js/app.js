@@ -22,26 +22,35 @@
         }
 
         this.initTodoItemsViews = function(){
-            $(".destroy").click(function(event){
+            $('.destroy').click(function(event){
                 var id = event.srcElement.parentElement.getElementsByClassName('todoItemId')[0].innerText;
                 self.todoListViewModel.deleteItem(id);
             });
 
-            $(".todoItemIsSelected").click(function(event){
+            $('.todoItemIsSelected').click(function(event){
                 var id = event.srcElement.parentElement.getElementsByClassName('todoItemId')[0].innerText;
                 var selected = event.srcElement.checked;
 
                 self.todoListViewModel.markItem(id, selected);
-
-                if (selected){
-                    event.srcElement.parentElement.parentElement.classList.add('completed');
-                }else{
-                    event.srcElement.parentElement.parentElement.classList.remove('completed');
-                }
-
             });
 
+            $('#toggle-all').click(function(){
 
+                var selected = event.srcElement.checked;
+                self.todoListViewModel.completeAll(selected);
+            });
+        }
+
+        this.markItem = function(id, selected){
+
+            var itemId = $('.todoItemId:contains("' + id + '")')[0];
+            var itemCheckBox = itemId.parentElement.getElementsByClassName('todoItemIsSelected')[0];
+            itemCheckBox.checked = selected;
+            if (selected){
+                itemId.parentElement.parentElement.classList.add('completed');
+            }else{
+                itemId.parentElement.parentElement.classList.remove('completed');
+            }
         }
     }
 
@@ -73,6 +82,7 @@
 
     view.setTodoListViewModel(todos);
     view.init();
+    todos.init();
 
 
 })( window );
