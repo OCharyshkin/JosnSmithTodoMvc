@@ -86,6 +86,7 @@ var TodoListViewModel = function(todosService, todoListView){
         if (text || text.trim()){
             var vm = getTodoItemById(id);
             vm.text.setValue(text.trim());
+
             saveTodos();
 
             todoListView.completeItemEditing(id);
@@ -116,6 +117,10 @@ var TodoListViewModel = function(todosService, todoListView){
     this.filter = function(value){
         setCurrentFilter(value);
         todoListView.setFilter(value);
+    }
+
+    this.cancelEditingItem = function(id){
+        todoListView.completeItemEditing(id);
     }
 
     function setCurrentFilter(filterName){

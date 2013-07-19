@@ -86,7 +86,7 @@
             $itemId.parent().parent().addClass('editing');
 
             var $editBox = $itemId.parent().parent().find('.edit');
-            $editBox.value = text;
+            $editBox.val(text);
             $editBox.focus();
         }
 
