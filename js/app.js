@@ -42,12 +42,10 @@
             js.bind(todos.itemLeftCount).to('#todo-count strong', { bidirectional: false });
 
             $('#toggle-all').click(function(event){
-                console.log('toogle');
                 self.todoListViewModel.completeAll();
             });
 
             $('#clear-completed').click(function(){
-                console.log('clear');
                 self.todoListViewModel.clearCompleted();
             });
         }
@@ -58,7 +56,6 @@
             });
 
             $('.todoItemIsSelected').click(function(event){
-                console.log('selected');
                 self.todoListViewModel.toogleItem(getItemId(event));
             });
 
@@ -84,27 +81,28 @@
         }
 
         this.editItem = function(id, text){
-            var itemId = $('.todoItemId:contains("' + id + '")')[0];
 
-            var editBox = itemId.parentElement.parentElement.getElementsByClassName('edit')[0];
-            itemId.parentElement.parentElement.classList.add('editing');
-            editBox.value = text;
-            editBox.focus();
+            var $itemId = $('.todoItemId:contains("' + id + '")');
+            $itemId.parent().parent().addClass('editing');
+
+            var $editBox = $itemId.parent().parent().find('.edit');
+            $editBox.value = text;
+            $editBox.focus();
         }
 
         this.markItem = function(id, selected){
-            var itemId = $('.todoItemId:contains("' + id + '")')[0];
+            var $itemId = $('.todoItemId:contains("' + id + '")');
 
             if (selected){
-                itemId.parentElement.parentElement.classList.add('completed');
+                $itemId.parent().parent().addClass('completed');
             }else{
-                itemId.parentElement.parentElement.classList.remove('completed');
+                $itemId.parent().parent().removeClass('completed');
             }
         }
 
         this.completeItemEditing = function(id){
-            var itemId = $('.todoItemId:contains("' + id + '")')[0];
-            itemId.parentElement.parentElement.classList.remove('editing');
+            var $itemId = $('.todoItemId:contains("' + id + '")');
+            $itemId.parent().parent().removeClass('editing');
         }
 
         this.setFilter = function(filterName){
