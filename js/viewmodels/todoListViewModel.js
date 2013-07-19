@@ -6,13 +6,16 @@ var TodoListViewModel = function(todosService, todoListView){
     this.todos = js.bindableList();
     this.todos.setValue(getTodosViewModel(todosService.getTodos()));
     this.allCompleted =  js.bindableValue();
+    this.completedCount = js.bindableValue();
+    this.itemLeftCount = js.bindableValue();
+
 
     this.init = function(){
         self.todos._value.forEach(function(viewModel){
             todoListView.markItem(viewModel.id, viewModel.isCompleted._value);
         });
 
-        initAllCompleted();
+        listChanged();
     }
 
     this.addNewTodoItem = function(text){
@@ -24,7 +27,7 @@ var TodoListViewModel = function(todosService, todoListView){
 
             todoListView.clearNewItemBox();
 
-            initAllCompleted();
+            listChanged();
 
             saveTodos();
         }
@@ -36,7 +39,7 @@ var TodoListViewModel = function(todosService, todoListView){
 
         todoListView.markItem(id, vm.isCompleted._value);
 
-        initAllCompleted();
+        listChanged();
 
         saveTodos();
     }
@@ -53,7 +56,7 @@ var TodoListViewModel = function(todosService, todoListView){
         var vm = getTodoItemById(id);
         self.todos.remove(vm);
 
-        initAllCompleted();
+        listChanged();
 
         saveTodos();
     }
@@ -67,7 +70,7 @@ var TodoListViewModel = function(todosService, todoListView){
             todoListView.markItem(viewModel.id, viewModel.isCompleted._value);
         });
 
-        initAllCompleted();
+        listChanged();
         saveTodos();
     }
 
@@ -81,6 +84,43 @@ var TodoListViewModel = function(todosService, todoListView){
         }else{
             self.deleteItem(id);
         }
+    }
+
+    this.clearCompleted = function(){
+        var completed = [];
+
+        self.todos._value.forEach(function(viewModel){
+            if (viewModel.isCompleted._value){
+                completed.push(viewModel);
+            }
+        });
+
+        if (completed.length > 0){
+            completed.forEach(function(item){
+                self.todos.remove(item);
+            });
+        }
+
+        listChanged();
+        saveTodos();
+    }
+
+    function listChanged(){
+
+        initAllCompleted();
+
+        var completedCount = 0;
+        self.todos._value.forEach(function(viewModel){
+            if (viewModel.isCompleted._value){
+                completedCount++;
+            }
+        });
+
+        self.completedCount.setValue(completedCount);
+        self.itemLeftCount.setValue(self.todos._value.length - completedCount);
+
+        todoListView.hasCompleted(completedCount > 0);
+
     }
 
     function initAllCompleted(){

@@ -39,6 +39,8 @@
 
             js.bind(todos.todos).to('#todo-list', TodoItemView);
             js.bind(todos.allCompleted).to('#toggle-all', { bidirectional: false });
+            js.bind(todos.completedCount).to('#completedCount', { bidirectional: false });
+            js.bind(todos.itemLeftCount).to('#todo-count strong', { bidirectional: false });
 
             self.initTodoItemsViews();
         }
@@ -75,6 +77,10 @@
                     }
                 }
             });
+
+            $('#clear-completed').click(function(){
+                self.todoListViewModel.clearCompleted();
+            });
         }
 
         this.editItem = function(id, text){
@@ -98,6 +104,14 @@
         this.completeItemEditing = function(id){
             var itemId = $('.todoItemId:contains("' + id + '")')[0];
             itemId.parentElement.parentElement.classList.remove('editing');
+        }
+
+        this.hasCompleted = function(value){
+            if (value){
+                $('#clear-completed').show();
+            } else {
+                $('#clear-completed').hide();
+            }
         }
 
         function getItemId(event){
