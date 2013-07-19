@@ -17,6 +17,8 @@ var TodoListViewModel = function(todosService, todoListView){
 
     this.init = function(){
         currentFilter = getFilterByName('');
+
+        todoListView.setFilter(currentFilter.name);
         listChanged();
     }
 
