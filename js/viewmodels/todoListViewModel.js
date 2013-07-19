@@ -55,6 +55,7 @@ var TodoListViewModel = function(todosService, todoListView){
     this.editItem = function(id){
 
         var vm = getTodoItemById(id);
+        vm.editing = true;
 
         todoListView.editItem(vm.id, vm.text._value);
     }
@@ -83,8 +84,17 @@ var TodoListViewModel = function(todosService, todoListView){
     }
 
     this.completeItemEditing = function(id, text){
+
+        var vm = getTodoItemById(id);
+
+        if (!vm.editing){
+            return;
+        }
+
+        vm.editing = false;
+
         if (text || text.trim()){
-            var vm = getTodoItemById(id);
+
             vm.text.setValue(text.trim());
 
             saveTodos();
@@ -120,6 +130,9 @@ var TodoListViewModel = function(todosService, todoListView){
     }
 
     this.cancelEditingItem = function(id){
+
+        var vm = getTodoItemById(id);
+        vm.editing = false;
         todoListView.completeItemEditing(id);
     }
 

@@ -15,4 +15,6 @@ var TodoItemViewModel = function(text){
     this.text.setValue(text);
     this.isCompleted.setValue(false);
 
+    this.editing = false;
+
 }
