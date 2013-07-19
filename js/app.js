@@ -33,16 +33,23 @@
                 if (event.which == ENTER_KEY){
                     var text =  event.srcElement.value;
                     todos.addNewTodoItem(text);
-                    view.initTodoItemsViews();
                 }
             });
 
-            js.bind(todos.todos).to('#todo-list', TodoItemView);
+            js.bind(todos.filteredTodos).to('#todo-list', TodoItemView);
             js.bind(todos.allCompleted).to('#toggle-all', { bidirectional: false });
             js.bind(todos.completedCount).to('#completedCount', { bidirectional: false });
             js.bind(todos.itemLeftCount).to('#todo-count strong', { bidirectional: false });
 
-            self.initTodoItemsViews();
+            $('#toggle-all').click(function(event){
+                console.log('toogle');
+                self.todoListViewModel.completeAll();
+            });
+
+            $('#clear-completed').click(function(){
+                console.log('clear');
+                self.todoListViewModel.clearCompleted();
+            });
         }
 
         this.initTodoItemsViews = function(){
@@ -51,11 +58,8 @@
             });
 
             $('.todoItemIsSelected').click(function(event){
+                console.log('selected');
                 self.todoListViewModel.toogleItem(getItemId(event));
-            });
-
-            $('#toggle-all').click(function(){
-                self.todoListViewModel.completeAll();
             });
 
             $('.todoItemText').dblclick(function(event){
@@ -77,10 +81,6 @@
                     }
                 }
             });
-
-            $('#clear-completed').click(function(){
-                self.todoListViewModel.clearCompleted();
-            });
         }
 
         this.editItem = function(id, text){
@@ -94,6 +94,7 @@
 
         this.markItem = function(id, selected){
             var itemId = $('.todoItemId:contains("' + id + '")')[0];
+
             if (selected){
                 itemId.parentElement.parentElement.classList.add('completed');
             }else{
@@ -104,6 +105,12 @@
         this.completeItemEditing = function(id){
             var itemId = $('.todoItemId:contains("' + id + '")')[0];
             itemId.parentElement.parentElement.classList.remove('editing');
+        }
+
+        this.setFilter = function(filterName){
+
+            $('#filters li a').removeClass('selected');
+            $('#filters li a[href="#/' + filterName + '"]').addClass('selected');
         }
 
         this.hasCompleted = function(value){
@@ -128,9 +135,15 @@
 
     var todos = new TodoListViewModel(new TodosService(), view);
 
+
     view.setTodoListViewModel(todos);
     view.init();
+
     todos.init();
+
+    Router({ '#/(.*)': {
+        on: function(filter){ todos.filter(filter) }
+    } }).init();
 
 
 })( window );

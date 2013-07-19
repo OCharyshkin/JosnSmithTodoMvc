@@ -2,20 +2,28 @@
 var TodoListViewModel = function(todosService, todoListView){
 
     var self = this;
+    var filters = [new Filter('', filterAll), new Filter('active', filterActive), new Filter('completed', filterCompleted)]
+    var currentFilter = {};
 
     this.todos = js.bindableList();
     this.todos.setValue(getTodosViewModel(todosService.getTodos()));
+
+    this.filteredTodos = js.bindableList();
+
     this.allCompleted =  js.bindableValue();
     this.completedCount = js.bindableValue();
     this.itemLeftCount = js.bindableValue();
 
 
     this.init = function(){
-        self.todos._value.forEach(function(viewModel){
+        currentFilter = getFilterByName('');
+        listChanged();
+    }
+
+    this.initView = function(){
+        self.filteredTodos._value.forEach(function(viewModel){
             todoListView.markItem(viewModel.id, viewModel.isCompleted._value);
         });
-
-        listChanged();
     }
 
     this.addNewTodoItem = function(text){
@@ -105,6 +113,37 @@ var TodoListViewModel = function(todosService, todoListView){
         saveTodos();
     }
 
+    this.filter = function(value){
+        setCurrentFilter(value);
+        todoListView.setFilter(value);
+    }
+
+    function setCurrentFilter(filterName){
+        currentFilter = getFilterByName(filterName);
+        filterItems();
+    }
+
+    function getFilterByName(name){
+
+        for(var i = 0; i < filters.length; i++){
+            if (filters[i].name == name){
+                return  filters[i];
+            }
+        }
+    }
+
+    function filterAll(viewModel){
+        return true;
+    }
+
+    function filterActive(viewModel){
+        return !viewModel.isCompleted._value;
+    }
+
+    function filterCompleted(viewModel){
+        return viewModel.isCompleted._value;
+    }
+
     function listChanged(){
 
         initAllCompleted();
@@ -121,6 +160,22 @@ var TodoListViewModel = function(todosService, todoListView){
 
         todoListView.hasCompleted(completedCount > 0);
 
+        filterItems();
+    }
+
+    function filterItems(){
+        var items = [];
+
+        self.todos._value.forEach(function (viewModel){
+            if (currentFilter.isAllowed(viewModel)){
+                items.push(viewModel);
+            }
+        });
+
+        self.filteredTodos.setValue(items);
+
+        todoListView.initTodoItemsViews();
+        self.initView();
     }
 
     function initAllCompleted(){
